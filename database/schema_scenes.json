@@ -1,0 +1,359 @@
+{
+    "bsonType": "object",
+    "properties": {
+        "_id": {
+            "bsonType": "objectId"
+        },
+        "nom": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 80
+        },
+        "type": {
+            "enum": [
+                "plein_air",
+                "chapiteau",
+                "salle"
+            ]
+        },
+        "capacite": {
+            "bsonType": "int",
+            "minimum": 1,
+            "maximum": 5000
+        },
+        "localisation": {
+            "bsonType": "object",
+            "properties": {
+                "zone": {
+                    "bsonType": "string"
+                },
+                "description": {
+                    "bsonType": "string"
+                }
+            },
+            "required": [
+                "zone"
+            ],
+            "additionalProperties": false
+        },
+        "equipements": {
+            "bsonType": "array",
+            "uniqueItems": true,
+            "items": {
+                "bsonType": "string"
+            }
+        },
+        "accessiblePMR": {
+            "bsonType": "bool"
+        },
+        "concerts": {
+            "bsonType": "array",
+            "maxItems": 10,
+            "items": {
+                "bsonType": "object",
+                "properties": {
+                    "_id": {
+                        "bsonType": "objectId"
+                    },
+                    "titre": {
+                        "bsonType": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                    },
+                    "description": {
+                        "bsonType": "string",
+                        "maxLength": 1000
+                    },
+                    "dateDebut": {
+                        "bsonType": "date"
+                    },
+                    "dateFin": {
+                        "bsonType": "date"
+                    },
+                    "genre": {
+                        "enum": [
+                            "rock",
+                            "pop",
+                            "electro",
+                            "rap"
+                        ]
+                    },
+                    "statut": {
+                        "enum": [
+                            "programme",
+                            "en_vente",
+                            "complet",
+                            "annule",
+                            "termine"
+                        ]
+                    },
+                    "artistes": {
+                        "bsonType": "array",
+                        "minItems": 1,
+                        "maxItems": 5,
+                        "items": {
+                            "bsonType": "object",
+                            "properties": {
+                                "_id": {
+                                    "bsonType": "objectId"
+                                },
+                                "nom": {
+                                    "bsonType": "string",
+                                    "minLength": 1,
+                                    "maxLength": 100
+                                },
+                                "pays": {
+                                    "bsonType": "string",
+                                    "minLength": 2,
+                                    "maxLength": 60
+                                },
+                                "role": {
+                                    "enum": [
+                                        "tete_affiche",
+                                        "premiere_partie",
+                                        "invite"
+                                    ]
+                                },
+                                "heurePassage": {
+                                    "bsonType": "date"
+                                },
+                                "biographie": {
+                                    "bsonType": "string",
+                                    "maxLength": 1000
+                                },
+                                "reseaux": {
+                                    "bsonType": "object",
+                                    "properties": {
+                                        "siteWeb": {
+                                            "bsonType": "string",
+                                            "pattern": "^https?://"
+                                        },
+                                        "instagram": {
+                                            "bsonType": "string"
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "required": [
+                                "_id",
+                                "nom",
+                                "pays",
+                                "role"
+                            ],
+                            "additionalProperties": false
+                        }
+                    },
+                    "categories": {
+                        "bsonType": "array",
+                        "minItems": 1,
+                        "maxItems": 3,
+                        "items": {
+                            "bsonType": "object",
+                            "properties": {
+                                "code": {
+                                    "enum": [
+                                        "standard",
+                                        "reduit",
+                                        "vip"
+                                    ]
+                                },
+                                "libelle": {
+                                    "bsonType": "string"
+                                },
+                                "prix": {
+                                    "bsonType": "number",
+                                    "minimum": 0,
+                                    "maximum": 500
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "libelle",
+                                "prix"
+                            ],
+                            "additionalProperties": false
+                        }
+                    },
+                    "tarifMin": {
+                        "bsonType": "number",
+                        "minimum": 0,
+                        "maximum": 500
+                    },
+                    "jauge": {
+                        "bsonType": "int",
+                        "minimum": 1
+                    },
+                    "dateMiseEnVente": {
+                        "bsonType": "date"
+                    },
+                    "billets": {
+                        "bsonType": "array",
+                        "items": {
+                            "bsonType": "object",
+                            "properties": {
+                                "code": {
+                                    "bsonType": "string",
+                                    "pattern": "^BLM-[A-Z0-9]{4}-[A-Z0-9]{4}$"
+                                },
+                                "categorie": {
+                                    "enum": [
+                                        "standard",
+                                        "reduit",
+                                        "vip"
+                                    ]
+                                },
+                                "prix": {
+                                    "bsonType": "number",
+                                    "minimum": 0,
+                                    "maximum": 500
+                                },
+                                "dateAchat": {
+                                    "bsonType": "date"
+                                },
+                                "statut": {
+                                    "enum": [
+                                        "valide",
+                                        "utilise",
+                                        "annule"
+                                    ]
+                                },
+                                "acheteur": {
+                                    "bsonType": "object",
+                                    "properties": {
+                                        "nom": {
+                                            "bsonType": "string",
+                                            "minLength": 1,
+                                            "maxLength": 60
+                                        },
+                                        "prenom": {
+                                            "bsonType": "string",
+                                            "minLength": 1,
+                                            "maxLength": 60
+                                        },
+                                        "email": {
+                                            "bsonType": "string",
+                                            "maxLength": 100,
+                                            "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+                                        }
+                                    },
+                                    "required": [
+                                        "nom",
+                                        "prenom",
+                                        "email"
+                                    ],
+                                    "additionalProperties": false
+                                },
+                                "controle": {
+                                    "bsonType": "object",
+                                    "properties": {
+                                        "dateScan": {
+                                            "bsonType": "date"
+                                        },
+                                        "vigile": {
+                                            "bsonType": "string",
+                                            "maxLength": 60
+                                        }
+                                    },
+                                    "required": [
+                                        "dateScan",
+                                        "vigile"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "categorie",
+                                "prix",
+                                "dateAchat",
+                                "statut",
+                                "acheteur"
+                            ],
+                            "additionalProperties": false
+                        }
+                    },
+                    "alertes": {
+                        "bsonType": "array",
+                        "maxItems": 500,
+                        "items": {
+                            "bsonType": "object",
+                            "properties": {
+                                "email": {
+                                    "bsonType": "string",
+                                    "maxLength": 100,
+                                    "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+                                },
+                                "dateCreation": {
+                                    "bsonType": "date"
+                                },
+                                "envoyee": {
+                                    "bsonType": "bool"
+                                }
+                            },
+                            "required": [
+                                "email",
+                                "dateCreation",
+                                "envoyee"
+                            ],
+                            "additionalProperties": false
+                        }
+                    },
+                    "historique": {
+                        "bsonType": "array",
+                        "maxItems": 50,
+                        "items": {
+                            "bsonType": "object",
+                            "properties": {
+                                "date": {
+                                    "bsonType": "date"
+                                },
+                                "auteur": {
+                                    "bsonType": "string"
+                                },
+                                "action": {
+                                    "enum": [
+                                        "creation",
+                                        "modification",
+                                        "mise_en_vente",
+                                        "annulation"
+                                    ]
+                                },
+                                "details": {
+                                    "bsonType": "string"
+                                }
+                            },
+                            "required": [
+                                "date",
+                                "auteur",
+                                "action"
+                            ],
+                            "additionalProperties": false
+                        }
+                    }
+                },
+                "required": [
+                    "_id",
+                    "titre",
+                    "dateDebut",
+                    "dateFin",
+                    "genre",
+                    "statut",
+                    "artistes",
+                    "categories",
+                    "tarifMin",
+                    "jauge",
+                    "billets"
+                ],
+                "additionalProperties": false
+            }
+        }
+    },
+    "required": [
+        "nom",
+        "type",
+        "capacite",
+        "concerts"
+    ],
+    "additionalProperties": false
+}

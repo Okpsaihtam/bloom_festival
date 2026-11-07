@@ -1,0 +1,164 @@
+[
+    {
+        "$expr": {
+            "$allElementsTrue": [
+                {
+                    "$map": {
+                        "input": "$concerts",
+                        "as": "c",
+                        "in": {
+                            "$gt": [
+                                "$$c.dateFin",
+                                "$$c.dateDebut"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "$expr": {
+            "$allElementsTrue": [
+                {
+                    "$map": {
+                        "input": "$concerts",
+                        "as": "c",
+                        "in": {
+                            "$lte": [
+                                "$$c.jauge",
+                                "$capacite"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "$expr": {
+            "$allElementsTrue": [
+                {
+                    "$map": {
+                        "input": "$concerts",
+                        "as": "c",
+                        "in": {
+                            "$lte": [
+                                {
+                                    "$size": {
+                                        "$filter": {
+                                            "input": "$$c.billets",
+                                            "as": "b",
+                                            "cond": {
+                                                "$ne": [
+                                                    "$$b.statut",
+                                                    "annule"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                },
+                                "$$c.jauge"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "$expr": {
+            "$allElementsTrue": [
+                {
+                    "$map": {
+                        "input": "$concerts",
+                        "as": "c",
+                        "in": {
+                            "$eq": [
+                                "$$c.tarifMin",
+                                {
+                                    "$min": "$$c.categories.prix"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "$expr": {
+            "$allElementsTrue": [
+                {
+                    "$map": {
+                        "input": "$concerts",
+                        "as": "c",
+                        "in": {
+                            "$allElementsTrue": [
+                                {
+                                    "$map": {
+                                        "input": "$$c.billets",
+                                        "as": "b",
+                                        "in": {
+                                            "$or": [
+                                                {
+                                                    "$ne": [
+                                                        "$$b.statut",
+                                                        "utilise"
+                                                    ]
+                                                },
+                                                {
+                                                    "$ne": [
+                                                        {
+                                                            "$type": "$$b.controle"
+                                                        },
+                                                        "missing"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "$expr": {
+            "$let": {
+                "vars": {
+                    "codes": {
+                        "$reduce": {
+                            "input": "$concerts",
+                            "initialValue": [],
+                            "in": {
+                                "$concatArrays": [
+                                    "$$value",
+                                    "$$this.billets.code"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "in": {
+                    "$eq": [
+                        {
+                            "$size": {
+                                "$setUnion": [
+                                    "$$codes",
+                                    []
+                                ]
+                            }
+                        },
+                        {
+                            "$size": "$$codes"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]
