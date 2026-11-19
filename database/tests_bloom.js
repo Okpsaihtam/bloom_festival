@@ -6,6 +6,54 @@ function doitEchouer(nom, fn) {
 }
 const SCENE = ObjectId("6650b1000000000000000001");
 const C1 = ObjectId("6650c1000000000000000001");
+db.scenes.deleteOne({ _id: SCENE });
+db.scenes.insertOne({
+  _id: SCENE,
+  nom: "Scène Tournesol",
+  type: "plein_air",
+  capacite: NumberInt(5000),
+  localisation: { zone: "Nord" },
+  accessiblePMR: true,
+  concerts: [
+    {
+      _id: C1,
+      titre: "Les Pétales Électriques - Live Bloom",
+      dateDebut: ISODate("2027-07-10T21:00:00Z"),
+      dateFin: ISODate("2027-07-10T23:00:00Z"),
+      genre: "electro",
+      statut: "en_vente",
+      artistes: [
+        { _id: ObjectId("6650a1000000000000000001"), nom: "Les Pétales Électriques", pays: "France", role: "tete_affiche" },
+        { _id: ObjectId("6650a1000000000000000002"), nom: "Moss Garden", pays: "Belgique", role: "premiere_partie" }
+      ],
+      categories: [
+        { code: "standard", libelle: "Fosse", prix: 45 },
+        { code: "reduit", libelle: "Tarif réduit", prix: 35 },
+        { code: "vip", libelle: "Carré VIP", prix: 120 }
+      ],
+      tarifMin: 35,
+      jauge: NumberInt(5000),
+      billets: [
+        { code: "BLM-7F3K-92QX", categorie: "standard", prix: 45, dateAchat: ISODate("2027-01-15T10:03:00Z"), statut: "valide",
+          acheteur: { nom: "Petit", prenom: "Léa", email: "lea.petit@mail.fr" } }
+      ],
+      alertes: []
+    },
+    {
+      _id: ObjectId("6650c1000000000000000002"),
+      titre: "Riff Riders - Rock Night",
+      dateDebut: ISODate("2027-07-11T20:00:00Z"),
+      dateFin: ISODate("2027-07-11T22:00:00Z"),
+      genre: "rock",
+      statut: "programme",
+      artistes: [{ _id: ObjectId("6650a1000000000000000003"), nom: "Riff Riders", pays: "France", role: "tete_affiche" }],
+      categories: [{ code: "standard", libelle: "Placement libre", prix: 30 }],
+      tarifMin: 30,
+      jauge: NumberInt(4000),
+      billets: []
+    }
+  ]
+});
 function sceneValide() { const s = db.scenes.findOne({ _id: SCENE }); delete s._id; s.nom = "Copie " + Math.random(); s.concerts.forEach(c => { c._id = new ObjectId(); c.billets = []; }); return s; }
 const billetValide = (code) => ({ code, categorie: "standard", prix: 45, dateAchat: new Date(), statut: "valide",
   acheteur: { nom: "Test", prenom: "Tom", email: "tom@test.fr" } });
@@ -117,5 +165,7 @@ printjson(db.scenes.aggregate([
   { $group: { _id: "$artistes.nom", billetsVendus: { $sum: "$vendus" } } },
   { $sort: { billetsVendus: -1 } }, { $limit: 10 }
 ]).toArray());
+
+db.scenes.deleteOne({ _id: SCENE });
 
 print("\nRÉSULTAT : " + ok + " refus corrects, " + ko + " erreurs.");
