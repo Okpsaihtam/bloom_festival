@@ -1,7 +1,27 @@
 const fs = require("fs");
 const path = require("path");
 
-const schema = EJSON.parse(fs.readFileSync(path.join(__dirname, "schema_scenes.json"), "utf8"));
+function versMongo(s) {
+  if (Array.isArray(s)) return s.map(versMongo);
+  if (s === null || typeof s !== "object") return s;
+  const r = {};
+  for (const [cle, valeur] of Object.entries(s)) {
+    if (cle === "$schema" || cle === "format") continue;
+    if (cle === "properties") {
+      r.properties = {};
+      for (const [champ, sousSchema] of Object.entries(valeur)) r.properties[champ] = versMongo(sousSchema);
+    } else {
+      r[cle] = versMongo(valeur);
+    }
+  }
+  if (s.format === "date-time" || s.format === "date") { delete r.type; r.bsonType = "date"; }
+  if (s.format === "email") r.pattern = "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$";
+  if (s.type === "integer") { delete r.type; r.bsonType = "int"; }
+  return r;
+}
+
+const schemaJson = JSON.parse(fs.readFileSync(path.join(__dirname, "schema_scenes.json"), "utf8"));
+const schema = versMongo(schemaJson);
 
 const pourChaqueConcert = (regle) => ({
   $expr: { $allElementsTrue: [{ $map: { input: "$concerts", as: "c", in: regle } }] }
